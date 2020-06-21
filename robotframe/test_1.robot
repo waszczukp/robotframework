@@ -110,7 +110,7 @@ Click log in
     Click element   ${buttonLogin}
 
 Check if logged in
-    Page Should Contain    Kosz
+    Page Should Contain    {odebrane}
 
 Close opened browser
     Close Browser
