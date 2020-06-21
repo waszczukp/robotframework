@@ -1,12 +1,16 @@
 *** Settings ***
-Library    funcs.py
-Library    SSHLibrary
+Library   funcs.py
+Library   SSHLibrary
+Library   Impansible
+Library   Collections
 
 *** Variables ***
 ${MY_STRING}   My very first string
 ${REMOTE_HOST}    localhost
 ${REMOTE_USERNAME}    vdi-student
 ${REMOTE_PASSWORD}    Pa$$w0rd
+${ansible_become_password}    vdi-student
+${ansible_user}    Pa$$w0rd
 
 *** Test Cases ***
 Test No One Test Space
@@ -23,10 +27,23 @@ Test No Four Test Space
     should be equal   ${assert}   1 ma 2
 
 Test No Four Open Remote And Login
+    [Tags]   login
     Connect to host
     Pass login and password
     Execute Command and assert correct execution
     Disconnect from host
+
+Test No Five Check Ping
+    [Tags]   ping
+    Connect to host
+    Pass login and password
+    Execute Command and assert correct execution
+    Check Connection
+    Disconnect from host
+
+Test No Six Download Data
+    [Tags]   data
+    Getting Data
 
 *** Keywords ***
 Show in console
@@ -45,9 +62,14 @@ Execute Command and assert correct execution
 
 Check Connection
     ${output8} =    Execute Command   ping -c1 8.8.8.8
-    Should Contain   ${output8}   0% packet loss
-    ${output9} =    Execute Command   ping -c1 8.8.8.9
-    Should Not Contain   ${output9}   100% packet loss
+    Should Not Contain   ${output8}   100%
 
 Disconnect from host
     Close Connection
+
+Getting Data
+    ${output} =   Setup   localhost
+    #log   ${output}   formatter=repr
+    ${y} =   get from dictionary   ${x}   ansible-facts
+    ${result} =   get from dictionary   ${y}   ansible-distribution
+    Should Be Equal   ${result}   Ubuntu
