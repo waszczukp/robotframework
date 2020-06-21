@@ -3,8 +3,18 @@ Library   funcs.py
 Library   SSHLibrary
 Library   Impansible
 Library   Collections
+Library   SeleniumLibrary
 
 *** Variables ***
+${SERVER}    localhost:7272
+${BROWSER}    Firefox
+${VALID_USERNAME}    testerwsb_t1
+${VALID_PASSWORD}    adam1234
+${loginInput}   id:login
+${passwordInput}   id:password
+${buttonLogin}   id:btnSubmit
+${odebrane}   odebrane
+
 ${MY_STRING}   My very first string
 ${REMOTE_HOST}    localhost
 ${REMOTE_USERNAME}    vdi-student
@@ -45,6 +55,16 @@ Test No Six Download Data
     [Tags]   data
     Getting Data
 
+Test No Seven Login To Mail Account
+    [Tags]   loginWp
+    Open new browser
+    Open Login Page
+    Pass login
+    Pass password
+    Click log in
+    Check if logged in
+    Close opened browser
+
 *** Keywords ***
 Show in console
     [Arguments]   ${text}
@@ -68,8 +88,29 @@ Disconnect from host
     Close Connection
 
 Getting Data
-    ${output} =   Setup   localhost
+    ${x} =   Setup   localhost
     #log   ${output}   formatter=repr
     ${y} =   get from dictionary   ${x}   ansible-facts
     ${result} =   get from dictionary   ${y}   ansible-distribution
     Should Be Equal   ${result}   Ubuntu
+
+Open new browser
+    Open Browser   about:blank   ${BROWSER}
+
+Open Login Page
+    Go to   https://profil.wp.pl/login.html?zaloguj=poczta
+
+Pass login
+    Input Text   ${loginInput}   ${VALID_USERNAME}
+
+Pass password
+    Input Text   ${passwordInput}   ${VALID_PASSWORD}
+
+Click log in
+    Click element   ${buttonLogin}
+
+Check if logged in
+    Page Should Contain    Kosz
+
+Close opened browser
+    Close Browser
